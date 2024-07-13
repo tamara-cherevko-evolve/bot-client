@@ -92,7 +92,7 @@ function App() {
           disabled={isRecalculatingSellOrder}
         >
           <BinanceLogo className="w-5 h-5 mr-2" />
-          {isLoading ? "Loading..." : "Recalculate Sell Order"}
+          {isRecalculatingSellOrder ? "Loading..." : "Recalculate Sell Order"}
         </Button>
         <div className="flex justify-end gap-5">
           <div>
