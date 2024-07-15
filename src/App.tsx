@@ -12,6 +12,9 @@ import StatisticTable from "components/StatisticTable";
 import DisconnectedMessage from "components/DisconnectedMessage";
 import { Badge } from "@/components/ui/badge";
 
+// const BASE_URL = "https://python-bot-ct2n.onrender.com";
+const BASE_URL = "http://localhost:8000";
+
 function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [connectionError, setConnectionError] = useState<Event | null>(null);
@@ -29,9 +32,7 @@ function App() {
   const startHandler = async () => {
     setIsLoading(true);
     try {
-      await axios.post("https://python-bot-ct2n.onrender.com/start-dca-grid", {
-        method: "POST",
-      });
+      await axios.get(`${BASE_URL}/start-dca-grid`);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -42,9 +43,12 @@ function App() {
   const recalculateSellOrderHandler = async () => {
     setIsRecalculatingSellOrder(true);
     try {
-      await axios.post("https://python-bot-ct2n.onrender.com/recalculate-sell-order", {
-        method: "POST",
-      });
+      await axios.post(
+        "https://python-bot-ct2n.onrender.com/recalculate-sell-order",
+        {
+          method: "POST",
+        }
+      );
       setIsRecalculatingSellOrder(false);
     } catch (error) {
       console.log(error);
