@@ -12,8 +12,8 @@ import StatisticTable from "components/StatisticTable";
 import DisconnectedMessage from "components/DisconnectedMessage";
 import { Badge } from "@/components/ui/badge";
 
-// const BASE_URL = "https://python-bot-ct2n.onrender.com";
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://python-bot-ct2n.onrender.com";
+// const BASE_URL = "http://localhost:8000";
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
