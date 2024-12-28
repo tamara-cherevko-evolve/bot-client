@@ -7,8 +7,9 @@ import { ICoin } from 'interfaces/coins/interface'
 const useGetCoins = () => {
   return useQuery({
     queryKey: [QUERIES_KEYS.GET_COINS],
-    queryFn: () => axiosGet<ICoin[]>(`/get-coins`),
+    queryFn: () => axiosGet<ICoin[]>(`/coins`),
     throwOnError: true,
+    staleTime: Infinity,
   })
 }
 

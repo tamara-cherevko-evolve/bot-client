@@ -10,19 +10,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { USD } from 'utils/currency'
 
 interface EarnConfirmBuyDialogProps extends AlertDialogProps {
   coin: string
+  amount: number
   onConfirm: () => void
   onClose: () => void
 }
 
-const EarnConfirmBuyDialog = ({ coin, open, onConfirm, onClose }: EarnConfirmBuyDialogProps) => {
+const EarnConfirmBuyDialog = ({ coin, open, amount, onConfirm, onClose }: EarnConfirmBuyDialogProps) => {
   return (
     <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure you want to buy {coin}?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Are you sure you want to buy {coin} for {USD(amount)}?
+          </AlertDialogTitle>
           <AlertDialogDescription>This purchase will be made from your Binance account</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

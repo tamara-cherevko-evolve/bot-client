@@ -4,11 +4,11 @@ import QUERIES_KEYS from 'constants/queriesKeys'
 import { axiosGet } from 'helpers/axiosInstance'
 import { IEarnData } from 'interfaces/earn/interface'
 
-const useGetEarnData = (coin: string) => {
+const useGetEarnHistory = (coinId: number) => {
   return useQuery({
-    queryKey: [QUERIES_KEYS.GET_EARN_DATA, coin],
-    queryFn: () => axiosGet<IEarnData[]>(`/get-earn-data/${coin}`),
+    queryKey: [QUERIES_KEYS.GET_EARN_HISTORY, coinId],
+    queryFn: () => axiosGet<IEarnData[]>(`/earn-history/${coinId}`),
   })
 }
 
-export default useGetEarnData
+export default useGetEarnHistory

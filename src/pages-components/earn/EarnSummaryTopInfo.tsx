@@ -4,12 +4,13 @@ import Big from 'big.js'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import { IEarnBalance } from 'interfaces/balance/interface'
+import { ICoin } from 'interfaces/coins/interface'
 import { IEarnSummary } from 'interfaces/earn/interface'
 import { cn } from 'utils/cn'
 import { USD } from 'utils/currency'
 
 interface EarnSummaryTopInfoProps {
-  earnSummary: IEarnSummary | null
+  earnSummary: (IEarnSummary & ICoin)[] | null
   balanceData: IEarnBalance | null
   isLoading: boolean
   className?: string
@@ -42,7 +43,7 @@ const EarnSummaryTopInfo = ({ earnSummary, balanceData, isLoading }: EarnSummary
 
   if (!earnSummary || !balanceData) return null
 
-  const coins = Object.values(earnSummary)
+  const coins = earnSummary || []
   const earn = coins.reduce((sum, coin) => sum.plus(coin.diff_in_dollars), Big(0)).toNumber()
   const totalSpent = coins.reduce((sum, coin) => sum.plus(coin.spent), Big(0)).toNumber()
   const totalBalance = Big(totalSpent).plus(earn).toNumber()
@@ -70,7 +71,7 @@ const EarnSummaryTopInfo = ({ earnSummary, balanceData, isLoading }: EarnSummary
   return (
     <>
       {values.map(({ title, value, additionalValue, valueColor }) => (
-        <div className="flex-1" key={title}>
+        <div key={title} className="md:flex-1">
           <SectionTitle>{title}</SectionTitle>
           <h2 className={cn(valueColor, 'text-xl mt-2')}>{value}</h2>
           <p className={cn(valueColor)}>{additionalValue}</p>
@@ -81,7 +82,7 @@ const EarnSummaryTopInfo = ({ earnSummary, balanceData, isLoading }: EarnSummary
 }
 
 const EarnSummaryTopInfoWithLayout = ({ className, ...props }: EarnSummaryTopInfoProps) => (
-  <div className={cn('flex justify-between space-x-4', className)}>
+  <div className={cn('flex justify-between space-x-4 h-20', className)}>
     <EarnSummaryTopInfo {...props} />
   </div>
 )

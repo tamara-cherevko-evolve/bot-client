@@ -7,7 +7,7 @@ import { IBalance } from 'interfaces/balance/interface'
 const useGetBalance = () => {
   return useQuery({
     queryKey: [QUERIES_KEYS.GET_BALANCE],
-    queryFn: () => axiosGet<IBalance>('/get-balance'),
+    queryFn: () => axiosGet<IBalance>('/balance'),
   })
 }
 

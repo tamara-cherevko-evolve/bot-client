@@ -1,4 +1,8 @@
 export interface ICoin {
-  coin: string
+  id: number
+  name: string
   title: string
+  priority: string
+  amount_round_to: number
+  price_round_to: number
 }

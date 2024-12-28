@@ -1,12 +1,15 @@
 import Big from 'big.js'
 
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { ICoin } from 'interfaces/coins/interface'
 import { IEarnData } from 'interfaces/earn/interface'
+import { getCoinAmount, getCoinPrice, getCoinSpent } from 'utils/coin'
 import { USD } from 'utils/currency'
+import { formatDate } from 'utils/date'
 
 interface EarnDataTableProps {
   data: IEarnData[]
-  coin: string
+  coin: ICoin
 }
 
 const EarnDataTable = ({ data, coin }: EarnDataTableProps) => {
@@ -19,7 +22,7 @@ const EarnDataTable = ({ data, coin }: EarnDataTableProps) => {
 
   return (
     <Table className="w-full text-white table-fixed">
-      <TableCaption>{`A list of ${coin} investments`}</TableCaption>
+      <TableCaption className="text-white">{`Earn History for ${coin.title}`}</TableCaption>
       <TableHeader>
         <TableRow className="border-none">
           <TableHead className="w-[100px] text-white">ID</TableHead>
@@ -34,19 +37,19 @@ const EarnDataTable = ({ data, coin }: EarnDataTableProps) => {
         <TableRow className="font-bold text-black border-transparent bg-primary/90 mt-[-1px]">
           <TableCell></TableCell>
           <TableCell>Total:</TableCell>
-          <TableCell>{totalAmount}</TableCell>
-          <TableCell>{USD(weightedAvgPrice, 8)}</TableCell>
-          <TableCell>{USD(totalSpent, 2)}</TableCell>
+          <TableCell>{getCoinAmount(totalAmount, coin)}</TableCell>
+          <TableCell>{getCoinPrice(weightedAvgPrice, coin)}</TableCell>
+          <TableCell>{getCoinSpent(totalSpent)}</TableCell>
           <TableCell>{USD(totalCommission, 2)}</TableCell>
         </TableRow>
         {data.map((item) => (
           <TableRow key={item.id}>
             <TableCell className="font-medium">{item.id}</TableCell>
-            <TableCell>{item.date}</TableCell>
-            <TableCell>{item.amount}</TableCell>
-            <TableCell>{USD(item.price, 8)}</TableCell>
-            <TableCell>{USD(item.total, 8)}</TableCell>
-            <TableCell>{USD(item.commission, 8)}</TableCell>
+            <TableCell>{formatDate(item.date)}</TableCell>
+            <TableCell>{getCoinAmount(item.amount, coin)}</TableCell>
+            <TableCell>{getCoinPrice(item.price, coin)}</TableCell>
+            <TableCell>{getCoinSpent(item.total)}</TableCell>
+            <TableCell>{USD(item.commission, 5)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

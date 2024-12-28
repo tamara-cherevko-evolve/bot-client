@@ -1,14 +1,15 @@
 import { Skeleton } from '@/components/ui/skeleton'
-import useGetEarnData from 'hooks/queries/earn/useGetEarnData'
+import useGetEarnHistory from 'hooks/queries/earn/useGetEarnHistory'
+import { ICoin } from 'interfaces/coins/interface'
 import EarnDataTable from 'pages-components/earn/EarnDataTable'
 import { ErrorAlert } from 'shared-components'
 
 interface EarnContentProps {
-  coin: string
+  coin: ICoin
 }
 
 const EarnContent = ({ coin }: EarnContentProps) => {
-  const { data: earnData, isPending, isError, error } = useGetEarnData(coin)
+  const { data: earnData, isPending, isError, error } = useGetEarnHistory(coin.id)
 
   if (isPending)
     return (

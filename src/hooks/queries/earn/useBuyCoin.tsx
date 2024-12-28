@@ -5,40 +5,40 @@ import QUERIES_KEYS from 'constants/queriesKeys'
 import { axiosPost } from 'helpers/axiosInstance'
 import useDialogOpen from 'hooks/useDialogOpen'
 import { ErrorResponse } from 'interfaces/common/interface'
-import { IBuyCoinResponse } from 'interfaces/earn/interface'
+import { IBuyCoinResponse, Purchase } from 'interfaces/earn/interface'
 import EarnConfirmBuyDialog from 'pages-components/earn/EarnConfirmBuyDialog'
 
 const useBuyCoin = () => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
-  const { state: coinToBuy, isOpen, openDialog, closeDialog } = useDialogOpen<string | null>(null)
+  const { state: purchase, isOpen, openDialog, closeDialog } = useDialogOpen<Purchase | null>(null)
 
   const mutation = useMutation({
-    mutationFn: (coin: string) => axiosPost<IBuyCoinResponse>(`/buy-coin`, { coin }),
+    mutationFn: (purchase: Purchase) => axiosPost<IBuyCoinResponse>(`/buy-coin`, purchase),
   })
 
-  const buyCoin = (coin: string) => {
-    openDialog(coin)
+  const buyCoin = (coin: string, purchaseAmount: number) => {
+    openDialog({ coin, purchaseAmount })
   }
 
   const handleConfirmBuyCoin = async () => {
     closeDialog()
 
-    if (!coinToBuy) return
+    if (!purchase) return
 
     try {
-      const data = await mutation.mutateAsync(coinToBuy)
+      const data = await mutation.mutateAsync(purchase)
 
       if (data?.status !== 'success') return
 
       toast({
         title: 'Success!',
-        description: `You have successfully bought ${data.order.origQty} of ${coinToBuy} for ${data.order.price}!`,
+        description: `You have successfully bought ${data.order.origQty} of ${purchase.coin} for ${data.order.price}!`,
         duration: 10000, //10 seconds
       })
       queryClient.invalidateQueries({ queryKey: [QUERIES_KEYS.GET_EARN_SUMMARY] })
       queryClient.invalidateQueries({ queryKey: [QUERIES_KEYS.GET_EARN_BALANCE] })
-      queryClient.invalidateQueries({ queryKey: [[QUERIES_KEYS.GET_EARN_DATA, coinToBuy]] })
+      queryClient.invalidateQueries({ queryKey: [[QUERIES_KEYS.GET_EARN_HISTORY, purchase]] })
     } catch (error) {
       toast({
         title: 'Oops... ERROR!',
@@ -50,11 +50,17 @@ const useBuyCoin = () => {
   }
 
   const ConfirmEarnBuyCoinDialog = () => (
-    <EarnConfirmBuyDialog coin={coinToBuy ?? ''} open={isOpen} onClose={closeDialog} onConfirm={handleConfirmBuyCoin} />
+    <EarnConfirmBuyDialog
+      coin={purchase?.coin ?? ''}
+      amount={purchase?.purchaseAmount ?? 0}
+      open={isOpen}
+      onClose={closeDialog}
+      onConfirm={handleConfirmBuyCoin}
+    />
   )
 
   return {
-    coinToBuy,
+    purchase,
     isOpen,
     openDialog,
     closeDialog,

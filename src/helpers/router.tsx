@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 
 import AppLayout from 'AppLayout'
 import { ROUTES } from 'constants/routes'
+import EarnOrdersHistory from 'pages/earn/EarnOrdersHistory'
 import EarnPage from 'pages/earn/EarnPage'
 import HomePage from 'pages/home/HomePage'
 import TradingPage from 'pages/trading/TradingPage'
@@ -15,11 +16,15 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: 'earn',
+        path: ROUTES.EARN,
         element: <EarnPage />,
       },
       {
-        path: 'trading',
+        path: `${ROUTES.EARN_HISTORY}/:coin`,
+        element: <EarnOrdersHistory />,
+      },
+      {
+        path: ROUTES.TRADING,
         element: <TradingPage />,
       },
     ],
