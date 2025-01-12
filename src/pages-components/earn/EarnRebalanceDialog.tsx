@@ -6,7 +6,7 @@ import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ICoin } from 'interfaces/coins/interface'
-import { IEarnSummary } from 'interfaces/earn/interface'
+import { IEarnCoinSummary } from 'interfaces/earn/interface'
 import { WithLoading } from 'shared-components'
 
 interface IFormInput {
@@ -14,7 +14,7 @@ interface IFormInput {
 }
 
 interface EarnRebalaceDialogProps extends DialogProps {
-  coin: IEarnSummary & ICoin
+  coin: IEarnCoinSummary & ICoin
   onSubmit: (amount: number) => void
   closeDialog?: () => void
   isLoading: boolean

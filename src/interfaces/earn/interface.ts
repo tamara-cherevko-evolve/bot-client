@@ -1,3 +1,4 @@
+import { ICoin } from 'interfaces/coins/interface'
 import { IOrder } from 'interfaces/orders/interface'
 
 export interface IEarnData {
@@ -10,6 +11,13 @@ export interface IEarnData {
 }
 
 export interface IEarnSummary {
+  balance: number
+  suggested_coin_id: number
+  suggested_bid: number
+  summary: (IEarnCoinSummary & ICoin)[]
+}
+
+export interface IEarnCoinSummary {
   coin: string
   coin_id: number
   amount: number

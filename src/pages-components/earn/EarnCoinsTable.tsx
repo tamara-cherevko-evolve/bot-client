@@ -1,15 +1,15 @@
 import { Card } from '@/components/ui/card'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ICoin } from 'interfaces/coins/interface'
-import { IEarnSummary } from 'interfaces/earn/interface'
+import { IEarnCoinSummary } from 'interfaces/earn/interface'
 import { cn } from 'utils/cn'
 
 import EarnSummaryTableRow from './EarnSummaryTableRow'
 
 interface EarnCoinsTableProps {
   className?: string
-  coins: (IEarnSummary & ICoin)[]
-  onBuyCoin: (coin: string) => void
+  coins: (IEarnCoinSummary & ICoin)[]
+  onBuyCoin: (coin: ICoin) => void
   onRebalanceCoin: (coin: string) => void
 }
 

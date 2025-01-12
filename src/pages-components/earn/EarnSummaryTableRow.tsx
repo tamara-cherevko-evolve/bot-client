@@ -1,9 +1,7 @@
-import Big from 'big.js'
-
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { ICoin } from 'interfaces/coins/interface'
-import { IEarnSummary } from 'interfaces/earn/interface'
+import { IEarnCoinSummary } from 'interfaces/earn/interface'
 import { CoinIcon } from 'shared-components'
 import { cn } from 'utils/cn'
 import { getCoinAmount, getCoinPrice, getCoinSpent, getDiffInDollars, getDiffInPercentage } from 'utils/coin'
@@ -11,9 +9,9 @@ import { getCoinAmount, getCoinPrice, getCoinSpent, getDiffInDollars, getDiffInP
 import EarnTableActions from './EarnTableActions'
 
 interface EarnSummaryCardProps {
-  summaryItem: IEarnSummary & ICoin
+  summaryItem: IEarnCoinSummary & ICoin
   className?: string
-  onBuyCoin: (coin: string) => void
+  onBuyCoin: (coin: ICoin) => void
   onRebalanceCoin: (coin: string) => void
 }
 
@@ -50,7 +48,7 @@ const EarnSummaryTableRow = ({ summaryItem, className, onBuyCoin, onRebalanceCoi
       <TableCell>{totalSpent}</TableCell>
       <TableCell>{totalAmount}</TableCell>
       <TableCell className="w-12 text-right">
-        <Button size="sm" onClick={() => onBuyCoin(summaryItem.coin)}>
+        <Button size="sm" onClick={() => onBuyCoin(summaryItem)}>
           Buy coin
         </Button>
       </TableCell>

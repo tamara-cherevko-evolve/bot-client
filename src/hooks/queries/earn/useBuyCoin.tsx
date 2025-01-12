@@ -4,6 +4,7 @@ import { useToast } from '@/hooks/use-toast'
 import QUERIES_KEYS from 'constants/queriesKeys'
 import { axiosPost } from 'helpers/axiosInstance'
 import useDialogOpen from 'hooks/useDialogOpen'
+import { ICoin } from 'interfaces/coins/interface'
 import { ErrorResponse } from 'interfaces/common/interface'
 import { IBuyCoinResponse, Purchase } from 'interfaces/earn/interface'
 import EarnConfirmBuyDialog from 'pages-components/earn/EarnConfirmBuyDialog'
@@ -17,17 +18,20 @@ const useBuyCoin = () => {
     mutationFn: (purchase: Purchase) => axiosPost<IBuyCoinResponse>(`/buy-coin`, purchase),
   })
 
-  const buyCoin = (coin: string, purchaseAmount: number) => {
-    openDialog({ coin, purchaseAmount })
+  const buyCoin = (coin: ICoin, purchaseAmount: number) => {
+    openDialog({ coin: coin.name, purchaseAmount })
   }
 
-  const handleConfirmBuyCoin = async () => {
+  const handleConfirmBuyCoin = async (value: number) => {
     closeDialog()
 
     if (!purchase) return
 
     try {
-      const data = await mutation.mutateAsync(purchase)
+      const data = await mutation.mutateAsync({
+        ...purchase,
+        purchaseAmount: value,
+      })
 
       if (data?.status !== 'success') return
 
@@ -52,10 +56,10 @@ const useBuyCoin = () => {
   const ConfirmEarnBuyCoinDialog = () => (
     <EarnConfirmBuyDialog
       coin={purchase?.coin ?? ''}
-      amount={purchase?.purchaseAmount ?? 0}
       open={isOpen}
       onClose={closeDialog}
       onConfirm={handleConfirmBuyCoin}
+      initialValue={purchase?.purchaseAmount ?? 0}
     />
   )
 

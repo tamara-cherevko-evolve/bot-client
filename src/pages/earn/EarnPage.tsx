@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import useBuyCoin from 'hooks/queries/earn/useBuyCoin'
-import useGetEarnBalanceWithSuggestion from 'hooks/queries/earn/useGetEarnBalanceWithSuggestion'
 import useGetEarnSummary from 'hooks/queries/earn/useGetEarnSummary'
 import useRebalanceCoin from 'hooks/queries/earn/useRebalanceCoin'
 import { EarnSummary } from 'pages-components'
@@ -18,17 +17,12 @@ import Layout from './Layout'
 const EarnPage = () => {
   const [customPurchaseAmount, setCustomPurchaseAmount] = useState<number | null>(null)
   const { data: earnSummary, isFetching: isFetchingEarnSummary, isPending: isEarnSummaryPending } = useGetEarnSummary()
-  // const {
-  //   data: balanceData,
-  //   isPending: balanceIsPending,
-  //   isFetching: isFetchingBalanceData,
-  // } = useGetEarnBalanceWithSuggestion()
+
   const { buyCoin, isPending: buyCoinIsPending, ConfirmEarnBuyCoinDialog } = useBuyCoin()
   const { rebalanceCoin, startRebalanceCoin, saveRebalanceCoin, isOpen, closeDialog, isPending, error } =
     useRebalanceCoin()
 
-  const purchaseAmount = 0
-  // const purchaseAmount = customPurchaseAmount ?? balanceData?.suggested_bid ?? 0
+  const purchaseAmount = customPurchaseAmount ?? earnSummary?.suggested_bid ?? 0
   // const rebalanceEarnSummaryForCoin = rebalanceCoin?.coin
   //   ? earnSummary?.find((coin) => coin.coin === rebalanceCoin.coin)
   //   : null
@@ -37,41 +31,34 @@ const EarnPage = () => {
 
   return (
     <>
-      {/* <EarnSummaryTopInfo
-        earnSummary={earnSummary || null}
-        balanceData={balanceData || null}
-        isLoading={isFetchingEarnSummary || isFetchingBalanceData}
-        className="mb-8"
-      />
-
+      <EarnSummaryTopInfo earnSummary={earnSummary || null} isLoading={isFetchingEarnSummary} className="mb-8" />
       <Card className={cn('p-6 h-48')}>
         <p className="mb-4 text-gray-300">Suggested Investment for Today</p>
-        {balanceIsPending && (
+        {isEarnSummaryPending && (
           <>
             <Skeleton className="w-64 h-6 mt-1" />
             <Skeleton className="w-64 h-6 mt-3" />
             <Skeleton className="w-64 h-6 mt-3" />
           </>
         )}
-        {balanceData && earnSummary && (
+        {earnSummary && (
           <EarnSummary
-            balanceData={balanceData}
             onPurchaseAmountChange={setCustomPurchaseAmount}
             earnSummary={earnSummary}
-            isLoading={isFetchingEarnSummary || isFetchingBalanceData}
+            isLoading={isFetchingEarnSummary}
             purchaseAmount={purchaseAmount}
             isPurchaseAmountCustom={customPurchaseAmount !== null}
             onBuyCoin={(coin) => buyCoin(coin, purchaseAmount)}
           />
         )}
-      </Card>  */}
+      </Card>
       {isEarnSummaryPending && <Skeleton className="w-full mt-8 h-96" />}
       {!isEarnSummaryPending && (
         <>
           <WithLoading isLoading={buyCoinIsPending}>
             <EarnCoinsTable
               className={cn('mt-8')}
-              coins={earnSummary || []}
+              coins={earnSummary?.summary || []}
               onBuyCoin={(coin) => buyCoin(coin, purchaseAmount)}
               onRebalanceCoin={startRebalanceCoin}
             />

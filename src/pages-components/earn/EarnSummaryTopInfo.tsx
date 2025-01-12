@@ -3,15 +3,12 @@ import { ReactNode } from 'react'
 import Big from 'big.js'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import { IEarnBalance } from 'interfaces/balance/interface'
-import { ICoin } from 'interfaces/coins/interface'
 import { IEarnSummary } from 'interfaces/earn/interface'
 import { cn } from 'utils/cn'
 import { USD } from 'utils/currency'
 
 interface EarnSummaryTopInfoProps {
-  earnSummary: (IEarnSummary & ICoin)[] | null
-  balanceData: IEarnBalance | null
+  earnSummary: IEarnSummary | null
   isLoading: boolean
   className?: string
 }
@@ -24,7 +21,7 @@ const SECTIONS = {
 
 const SectionTitle = ({ children }: { children: ReactNode }) => <p className="text-secondary-foreground">{children}</p>
 
-const EarnSummaryTopInfo = ({ earnSummary, balanceData, isLoading }: EarnSummaryTopInfoProps) => {
+const EarnSummaryTopInfo = ({ earnSummary, isLoading }: EarnSummaryTopInfoProps) => {
   if (isLoading) {
     return (
       <>
@@ -41,9 +38,9 @@ const EarnSummaryTopInfo = ({ earnSummary, balanceData, isLoading }: EarnSummary
     )
   }
 
-  if (!earnSummary || !balanceData) return null
+  if (!earnSummary) return null
 
-  const coins = earnSummary || []
+  const { summary: coins } = earnSummary || []
   const earn = coins.reduce((sum, coin) => sum.plus(coin.diff_in_dollars), Big(0)).toNumber()
   const totalSpent = coins.reduce((sum, coin) => sum.plus(coin.spent), Big(0)).toNumber()
   const totalBalance = Big(totalSpent).plus(earn).toNumber()

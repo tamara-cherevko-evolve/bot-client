@@ -1,55 +1,42 @@
-import { format, isToday, isValid, isYesterday, max } from 'date-fns'
+import { isToday, isValid, isYesterday, max } from 'date-fns'
 import { Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import useDialogOpen from 'hooks/useDialogOpen'
-import { IEarnBalance } from 'interfaces/balance/interface'
 import { ICoin } from 'interfaces/coins/interface'
 import { IEarnSummary } from 'interfaces/earn/interface'
 import { cn } from 'utils/cn'
 import { USD } from 'utils/currency'
 import { formatDate } from 'utils/date'
 
-import EarnUpdateBidDialog from './EarnUpdateBidDialog'
-
 interface EarnSummaryProps {
-  balanceData: IEarnBalance
-  earnSummary: (IEarnSummary & ICoin)[]
+  earnSummary: IEarnSummary
   isLoading: boolean
   purchaseAmount: number
   isPurchaseAmountCustom: boolean
-  onBuyCoin: (coin: string) => void
+  onBuyCoin: (coin: ICoin) => void
   onPurchaseAmountChange: (amount: number | null) => void
 }
-const EarnSummary = ({
-  balanceData,
-  earnSummary,
-  isLoading,
-  purchaseAmount,
-  isPurchaseAmountCustom,
-  onBuyCoin,
-  onPurchaseAmountChange,
-}: EarnSummaryProps) => {
-  const { isOpen, closeDialog, openDialog } = useDialogOpen()
-
-  const coins = earnSummary || []
+const EarnSummary = ({ earnSummary, isLoading, purchaseAmount, onBuyCoin }: EarnSummaryProps) => {
+  const coins = earnSummary.summary || []
+  const isBalanceEnough = earnSummary.balance > earnSummary.suggested_bid
   const lastInvestment = max(coins.map((coin) => new Date(coin.last_investment)))
   const formattedLastInvestment = isValid(lastInvestment) ? formatDate(lastInvestment) : ''
   const isLastInvestmentToday = isValid(lastInvestment) && isToday(lastInvestment) ? ' (Today)' : ''
   const isLastInvestmentYesterday = isValid(lastInvestment) && isYesterday(lastInvestment) ? ' (Yesterday)' : ''
   const lastInvestmentDate = `${formattedLastInvestment}${isLastInvestmentToday}${isLastInvestmentYesterday}`
+  const suggestedCoin = coins.find((coin) => coin.coin_id === earnSummary.suggested_coin_id)
 
   return (
     <>
-      {!balanceData.is_ballance_enough && (
+      {!isBalanceEnough && (
         <div>
           <p className={cn('flex space-x-2 ')}>
             <span className="text-destructive">Insufficient balance:</span>
-            <span className="text-destructive">{USD(balanceData?.balance ?? 0, 2)}</span>
+            <span className="text-destructive">{USD(earnSummary?.balance ?? 0, 2)}</span>
           </p>
           <p className={cn('flex space-x-2')}>
             <span>Minimal balance:</span>
-            <span>{USD(balanceData.minimum_balance)}</span>
+            <span>{USD(earnSummary.suggested_bid)}</span>
           </p>
           <Button
             variant="link"
@@ -60,55 +47,28 @@ const EarnSummary = ({
           </Button>
         </div>
       )}
-      {balanceData.is_ballance_enough && (
+      {isBalanceEnough && suggestedCoin && (
         <div className="mb-1 space-y-1">
           <div className="flex space-x-2">
             <p className="text-gray-300 ">Suggested to buy:</p>
             <p className={cn('flex space-x-2')}>
-              <span>{balanceData.suggested_coin}</span>
+              <span>{suggestedCoin.name}</span>
               <span>|</span>
             </p>
-            <Button
-              variant="link"
-              className="h-6 p-0"
-              onClick={() => onBuyCoin(balanceData.suggested_coin)}
-              disabled={isLoading}
-            >
+            <Button variant="link" className="h-6 p-0" onClick={() => onBuyCoin(suggestedCoin)} disabled={isLoading}>
               {isLoading && (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Please wait
                 </>
               )}
-              {!isLoading && `Buy ${balanceData.suggested_coin}`}
+              {!isLoading && `Buy ${suggestedCoin.name}`}
             </Button>
           </div>
           <div className="flex space-x-2">
             <p className="text-gray-300 ">Suggested purchase amount: {USD(purchaseAmount)}</p>
-            <span>|</span>
-            <Button variant="link" className="h-6 p-0" onClick={openDialog}>
-              Change
-            </Button>
-            {isPurchaseAmountCustom && (
-              <>
-                <span>|</span>
-                <Button variant="link" className="h-6 p-0" onClick={() => onPurchaseAmountChange(null)}>
-                  Revert
-                </Button>
-              </>
-            )}
-            {isOpen && (
-              <EarnUpdateBidDialog
-                open
-                onOpenChange={closeDialog}
-                initialValue={purchaseAmount}
-                onSubmit={(amount) => {
-                  onPurchaseAmountChange(amount)
-                }}
-              />
-            )}
           </div>
-          <p className="mb-2 text-gray-300">Binance Balance: {USD(balanceData?.balance ?? 0, 2)}</p>
+          <p className="mb-2 text-gray-300">Binance Balance: {USD(earnSummary?.balance ?? 0, 2)}</p>
         </div>
       )}
       <div>

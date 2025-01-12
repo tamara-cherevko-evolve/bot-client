@@ -14,11 +14,13 @@ const EarnOrdersHistory = () => {
 
   if (!coins?.length) return null
 
-  const tabs = coins.map((coin) => ({
-    name: coin.name,
-    title: coin.title,
-    content: <EarnContent coin={coin} />,
-  }))
+  const tabs = coins
+    .sort((a, b) => Number(a.priority) - Number(b.priority))
+    .map((coin) => ({
+      name: coin.name,
+      title: coin.title,
+      content: <EarnContent coin={coin} />,
+    }))
 
   return (
     <>

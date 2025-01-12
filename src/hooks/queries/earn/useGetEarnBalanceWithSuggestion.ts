@@ -7,7 +7,7 @@ import { IEarnBalance } from 'interfaces/balance/interface'
 const useGetEarnBalanceWithSuggestion = () => {
   return useQuery({
     queryKey: [QUERIES_KEYS.GET_EARN_BALANCE],
-    queryFn: () => axiosGet<IEarnBalance>('/get-earn-balance-with-suggestion'),
+    queryFn: () => axiosGet<IEarnBalance>('/earn-suggestion'),
   })
 }
 
