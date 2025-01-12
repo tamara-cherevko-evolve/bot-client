@@ -15,7 +15,10 @@ const useBuyCoin = () => {
   const { state: purchase, isOpen, openDialog, closeDialog } = useDialogOpen<Purchase | null>(null)
 
   const mutation = useMutation({
-    mutationFn: (purchase: Purchase) => axiosPost<IBuyCoinResponse>(`/buy-coin`, purchase),
+    mutationFn: (purchase: Purchase) =>
+      axiosPost<IBuyCoinResponse>(`/coins/buy/${purchase.coin}`, {
+        amount: purchase.purchaseAmount,
+      }),
   })
 
   const buyCoin = (coin: ICoin, purchaseAmount: number) => {
@@ -25,7 +28,7 @@ const useBuyCoin = () => {
   const handleConfirmBuyCoin = async (value: number) => {
     closeDialog()
 
-    if (!purchase) return
+    if (!purchase) throw new Error('Purchase is not defined')
 
     try {
       const data = await mutation.mutateAsync({
@@ -33,11 +36,11 @@ const useBuyCoin = () => {
         purchaseAmount: value,
       })
 
-      if (data?.status !== 'success') return
+      if (!data) throw new Error('Something went wrong')
 
       toast({
         title: 'Success!',
-        description: `You have successfully bought ${data.order.origQty} of ${purchase.coin} for ${data.order.price}!`,
+        description: `You have successfully bought ${data.amount} of ${purchase.coin} for ${data.price}!`,
         duration: 10000, //10 seconds
       })
       queryClient.invalidateQueries({ queryKey: [QUERIES_KEYS.GET_EARN_SUMMARY] })

@@ -55,7 +55,7 @@ const EarnPage = () => {
       {isEarnSummaryPending && <Skeleton className="w-full mt-8 h-96" />}
       {!isEarnSummaryPending && (
         <>
-          <WithLoading isLoading={buyCoinIsPending}>
+          <WithLoading isLoading={buyCoinIsPending || isFetchingEarnSummary}>
             <EarnCoinsTable
               className={cn('mt-8')}
               coins={earnSummary?.summary || []}

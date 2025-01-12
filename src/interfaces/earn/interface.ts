@@ -30,8 +30,9 @@ export interface IEarnCoinSummary {
 }
 
 export interface IBuyCoinResponse {
-  status: string
-  order: IOrder
+  coin: string
+  amount: number
+  price: number
 }
 
 export interface Purchase {

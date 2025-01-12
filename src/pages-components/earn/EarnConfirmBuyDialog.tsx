@@ -11,7 +11,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { USD } from 'utils/currency'
 
 interface EarnConfirmBuyDialogProps extends AlertDialogProps {
   coin: string
