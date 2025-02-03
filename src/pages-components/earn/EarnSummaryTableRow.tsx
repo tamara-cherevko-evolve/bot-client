@@ -18,7 +18,7 @@ interface EarnSummaryCardProps {
 const EarnSummaryTableRow = ({ summaryItem, className, onBuyCoin, onRebalanceCoin }: EarnSummaryCardProps) => {
   if (!summaryItem) return null
 
-  const { coin, amount, spent, diff_in_dollars, diff_in_percentage, current_price, avg_price } = summaryItem
+  const { name, amount, spent, diff_in_dollars, diff_in_percentage, current_price, avg_price } = summaryItem
 
   const isPositive = diff_in_dollars > 0
   const earningColor = isPositive ? 'text-green-500' : 'text-red-500'
@@ -32,9 +32,9 @@ const EarnSummaryTableRow = ({ summaryItem, className, onBuyCoin, onRebalanceCoi
   return (
     <TableRow className={cn(className)}>
       <TableCell className="font-medium w-28">
-        <a href={`https://www.binance.com/uk-UA/trade/${coin}_USDT?type=spot`} target="_blank" rel="noreferrer">
-          <CoinIcon coin={coin} className="mr-2" />
-          {coin}
+        <a href={`https://www.binance.com/uk-UA/trade/${name}_USDT?type=spot`} target="_blank" rel="noreferrer">
+          <CoinIcon coin={name} className="mr-2" />
+          {name}
         </a>
       </TableCell>
       <TableCell>
@@ -53,7 +53,7 @@ const EarnSummaryTableRow = ({ summaryItem, className, onBuyCoin, onRebalanceCoi
         </Button>
       </TableCell>
       <TableCell className="w-12 text-right">
-        <EarnTableActions coin={coin} onRebalanceCoin={() => onRebalanceCoin(coin)} />
+        <EarnTableActions coin={name} onRebalanceCoin={() => onRebalanceCoin(name)} />
       </TableCell>
     </TableRow>
   )

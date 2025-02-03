@@ -20,7 +20,7 @@ const EarnCoinsTable = ({ className, coins, onBuyCoin, onRebalanceCoin }: EarnCo
       <Table className="w-full text-white table-auto">
         <TableHeader>
           <TableRow className="border-none">
-            <TableHead className="w-[100px] text-white">Coin</TableHead>
+            <TableHead className="w-[130px] text-white">Coin</TableHead>
             <TableHead className="text-white">Current Prise / Earn Price</TableHead>
             <TableHead className="text-white">Earning</TableHead>
             <TableHead className="text-white">Spent</TableHead>
@@ -30,14 +30,16 @@ const EarnCoinsTable = ({ className, coins, onBuyCoin, onRebalanceCoin }: EarnCo
           </TableRow>
         </TableHeader>
         <TableBody>
-          {coins.map((item) => (
-            <EarnSummaryTableRow
-              summaryItem={item}
-              onBuyCoin={onBuyCoin}
-              onRebalanceCoin={onRebalanceCoin}
-              key={item.coin}
-            />
-          ))}
+          {coins
+            .sort((a, b) => Number(a.priority) - Number(b.priority))
+            .map((item) => (
+              <EarnSummaryTableRow
+                summaryItem={item}
+                onBuyCoin={onBuyCoin}
+                onRebalanceCoin={onRebalanceCoin}
+                key={item.name}
+              />
+            ))}
         </TableBody>
       </Table>
     </Card>

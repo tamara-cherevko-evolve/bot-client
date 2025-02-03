@@ -1,4 +1,3 @@
-import { isToday, isValid, isYesterday, max } from 'date-fns'
 import { Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -6,7 +5,6 @@ import { ICoin } from 'interfaces/coins/interface'
 import { IEarnSummary } from 'interfaces/earn/interface'
 import { cn } from 'utils/cn'
 import { USD } from 'utils/currency'
-import { formatDate } from 'utils/date'
 
 interface EarnSummaryProps {
   earnSummary: IEarnSummary
@@ -19,12 +17,7 @@ interface EarnSummaryProps {
 const EarnSummary = ({ earnSummary, isLoading, purchaseAmount, onBuyCoin }: EarnSummaryProps) => {
   const coins = earnSummary.summary || []
   const isBalanceEnough = earnSummary.balance > earnSummary.suggested_bid
-  const lastInvestment = max(coins.map((coin) => new Date(coin.last_investment)))
-  const formattedLastInvestment = isValid(lastInvestment) ? formatDate(lastInvestment) : ''
-  const isLastInvestmentToday = isValid(lastInvestment) && isToday(lastInvestment) ? ' (Today)' : ''
-  const isLastInvestmentYesterday = isValid(lastInvestment) && isYesterday(lastInvestment) ? ' (Yesterday)' : ''
-  const lastInvestmentDate = `${formattedLastInvestment}${isLastInvestmentToday}${isLastInvestmentYesterday}`
-  const suggestedCoin = coins.find((coin) => coin.coin_id === earnSummary.suggested_coin_id)
+  const suggestedCoin = coins.find((coin) => coin.id === earnSummary.suggested_coin_id)
 
   return (
     <>
@@ -71,9 +64,6 @@ const EarnSummary = ({ earnSummary, isLoading, purchaseAmount, onBuyCoin }: Earn
           <p className="mb-2 text-gray-300">Binance Balance: {USD(earnSummary?.balance ?? 0, 2)}</p>
         </div>
       )}
-      <div>
-        <p className="text-gray-300 ">Last Investment was made: {lastInvestmentDate}</p>
-      </div>
     </>
   )
 }

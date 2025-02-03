@@ -39,7 +39,7 @@ const EarnRebalanceDialog = ({ coin, isLoading, error, onSubmit, closeDialog, ..
       <Dialog {...props} onOpenChange={closeDialog}>
         <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
-            <DialogTitle>Rebalance {coin.coin}</DialogTitle>
+            <DialogTitle>Rebalance {coin.name}</DialogTitle>
             <DialogDescription>
               Enter the amount of coin which was left after rebalance. This amoun will save with current earn price.
             </DialogDescription>

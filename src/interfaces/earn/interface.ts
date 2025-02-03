@@ -1,5 +1,9 @@
 import { ICoin } from 'interfaces/coins/interface'
-import { IOrder } from 'interfaces/orders/interface'
+
+export enum EarnDirection {
+  BUY = 'buy',
+  SELL = 'sell',
+}
 
 export interface IEarnData {
   id: number
@@ -8,6 +12,7 @@ export interface IEarnData {
   price: number
   total: number
   commission: number
+  direction: EarnDirection
 }
 
 export interface IEarnSummary {
@@ -18,15 +23,14 @@ export interface IEarnSummary {
 }
 
 export interface IEarnCoinSummary {
-  coin: string
-  coin_id: number
+  name: string
+  id: number
   amount: number
   spent: number
   diff_in_dollars: number
   diff_in_percentage: number
   current_price: number
   avg_price: number
-  last_investment: Date
 }
 
 export interface IBuyCoinResponse {
