@@ -8,10 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ReactComponent as BinanceLogo } from 'assets/images/binanceLogo.svg'
+import useGetTradingInfo from 'hooks/queries/trading/useGetTradingInfo'
 import { IOrder, IOrdersData } from 'interfaces/orders/interface'
 import DisconnectedMessage from 'shared-components/DisconnectedMessage'
 import OrdersTable from 'shared-components/OrdersTable'
 import StatisticTable from 'shared-components/StatisticTable'
+import { cn } from 'utils/cn'
+import { USD } from 'utils/currency'
 
 import Layout from './Layout'
 
@@ -21,6 +24,7 @@ const TradingPage = () => {
   const [isRecalculatingSellOrder, setIsRecalculatingSellOrder] = useState(false)
   const [connectionStatus, setConnectionStatus] = useState<boolean>(false)
   const [ordersData, setOrdersData] = useState<IOrdersData | null>(null)
+  const { data: tradingInfo, isLoading: isTradingInfoLoading } = useGetTradingInfo(1)
 
   // useEffect(() => {
   //   axios.get(`${BASE_URL}/get-balance`);
@@ -38,6 +42,10 @@ const TradingPage = () => {
     //   console.log(error);
     //   setIsLoading(false);
     // }
+  }
+
+  const handleChangeQauntity = () => {
+    // Handle change quantity logic here
   }
 
   const recalculateSellOrderHandler = async () => {
@@ -86,31 +94,55 @@ const TradingPage = () => {
 
   return (
     <Layout>
-      <div className="h-full bg-gray-800 App">
-        <div className="flex justify-between gap-5 mt-4 mb-8">
-          <Button onClick={recalculateSellOrderHandler} className="w-[210px]" disabled={isRecalculatingSellOrder}>
-            <BinanceLogo className="w-5 h-5 mr-2" />
-            {isRecalculatingSellOrder ? 'Loading...' : 'Recalculate Sell Order'}
-          </Button>
-          <div className="flex justify-end gap-5">
-            <div>
-              <Badge
-                variant="default"
-                className={`${connectionStatus ? 'bg-green-500' : 'bg-gray-500'} text-white p-2`}
-              >
-                {connectionStatus ? 'Connected' : 'Disconnected'}
-              </Badge>
-            </div>
-            <Button
-              onClick={startHandler}
-              disabled={isLoading || !!ordersData?.orders_are_listening?.length}
-              className="w-[210px]"
-            >
-              <BinanceLogo className="w-5 h-5 mr-2" />
-              {isLoading ? 'Loading...' : 'Start DCA Grid'}
-            </Button>
-          </div>
+      <div className="h-full App">
+        <div className="flex justify-end gap-5 mt-4 mb-8">
+          <Badge
+            variant="default"
+            className={`${connectionStatus ? 'bg-green-500' : 'bg-gray-500'} text-white p-2 px-4`}
+          >
+            {connectionStatus ? 'Connected to server' : 'Disconnected from server'}
+          </Badge>
         </div>
+        <Card className={cn('p-6 min-h-48')}>
+          <p className="mb-4 text-gray-300">Current Investment stratege</p>
+          {isTradingInfoLoading && (
+            <>
+              <Skeleton className="w-64 h-6 mt-1" />
+              <Skeleton className="w-64 h-6 mt-2" />
+              <Skeleton className="w-40 h-9 mt-3" />
+            </>
+          )}
+          {!!tradingInfo && (
+            <>
+              <div className="flex gap-4">
+                <p>Quantity: {tradingInfo.quantity}</p>
+                <Button variant="link" className="h-6 p-0" onClick={() => handleChangeQauntity} disabled={isLoading}>
+                  Change
+                </Button>
+              </div>
+              <div className="flex gap-4">
+                <p className={cn('flex space-x-2')}>
+                  <span>Estimated balance:</span>
+                  <span>{USD(244)}</span>
+                </p>
+                <Button
+                  variant="link"
+                  className="h-6 p-0"
+                  onClick={() => window.open('https://p2p.binance.com/uk-UA', '_blank')}
+                >
+                  Refill balance
+                </Button>
+              </div>
+              <Button
+                onClick={startHandler}
+                disabled={isLoading || !!ordersData?.orders_are_listening?.length}
+                className="w-40 mt-4"
+              >
+                {isLoading ? 'Loading...' : 'Start DCA Grid'}
+              </Button>
+            </>
+          )}
+        </Card>
 
         <div className="flex gap-10 mt-5">
           <div className="basis-1/2">

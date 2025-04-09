@@ -4,8 +4,8 @@ import { BalanceStatus } from 'pages-components'
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
-    <div>
-      <BalanceStatus />
+    <div className="p-8 pt-0">
+      {/* <BalanceStatus /> */}
       {children}
     </div>
   )
