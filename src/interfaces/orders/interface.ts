@@ -1,3 +1,5 @@
+import { TradingOrderStatus } from 'interfaces/trading/interface'
+
 import { ORDER_SIDE, ORDER_STATUS } from './enum'
 
 export interface IOrdersData {
@@ -33,4 +35,15 @@ export interface IOrder {
   workingTime: number
   origQuoteOrderQty: string
   selfTradePreventionMode: string
+}
+
+export interface TradingOrder {
+  coin_id: number
+  quantity: string
+  price: string
+  total: string
+  transaction_time: Date
+  commission: string
+  status: TradingOrderStatus
+  binance_order_id: string
 }

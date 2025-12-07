@@ -7,9 +7,19 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ReactComponent as BinanceLogo } from 'assets/images/binanceLogo.svg'
+import { toast } from '@/hooks/use-toast'
 import useGetTradingInfo from 'hooks/queries/trading/useGetTradingInfo'
+import useGetTradingOrders from 'hooks/queries/trading/useGetTradingOrders'
+import useStartStrategy from 'hooks/queries/trading/useStartrTradingStrategy'
+import useStartrTradingStrategy from 'hooks/queries/trading/useStartrTradingStrategy'
+import useUpdateTredingInfo from 'hooks/queries/trading/useUpdateTredingInfo'
+import useGetBalance from 'hooks/queries/useGetBalance'
+import useDialogOpen from 'hooks/useDialogOpen'
+import { ErrorResponse } from 'interfaces/common/interface'
 import { IOrder, IOrdersData } from 'interfaces/orders/interface'
+import { TradingInfoToUpdate } from 'interfaces/trading/interface'
+import TradingInfo from 'pages-components/trading/TradingInfo'
+import UpdateTradingInfoDialog from 'pages-components/trading/UpdateTradingInfoDialog'
 import DisconnectedMessage from 'shared-components/DisconnectedMessage'
 import OrdersTable from 'shared-components/OrdersTable'
 import StatisticTable from 'shared-components/StatisticTable'
@@ -18,34 +28,76 @@ import { USD } from 'utils/currency'
 
 import Layout from './Layout'
 
+const DEFAULT_COIN = 'BTC'
+const DEFAULT_COIN_ID = 1
+
 const TradingPage = () => {
-  const [isLoading, setIsLoading] = useState(false)
   const [connectionError, setConnectionError] = useState<Event | null>(null)
   const [isRecalculatingSellOrder, setIsRecalculatingSellOrder] = useState(false)
   const [connectionStatus, setConnectionStatus] = useState<boolean>(false)
   const [ordersData, setOrdersData] = useState<IOrdersData | null>(null)
-  const { data: tradingInfo, isLoading: isTradingInfoLoading } = useGetTradingInfo(1)
+  const { data: tradingInfo, isLoading: isTradingInfoLoading } = useGetTradingInfo(DEFAULT_COIN_ID)
+  const { isLoading: isBalanceLoading, data: balance } = useGetBalance()
+  const { mutateAsync: updateTradingInfo } = useUpdateTredingInfo()
+  const { data: orders, isLoading: isOrdersLoading } = useGetTradingOrders(DEFAULT_COIN_ID)
+  const { mutateAsync: startTradingStrategy, isPending: isLoadingTradingStrategy } = useStartrTradingStrategy()
+  const {
+    state: tradingInfoToUpdate,
+    isOpen: isUpdateTradingInfoDialogOpen,
+    openDialog: openUpdateTradingInfoDialog,
+    closeDialog: closeUpdateTradingInfoDialog,
+  } = useDialogOpen<TradingInfoToUpdate | null>(null)
 
-  // useEffect(() => {
-  //   axios.get(`${BASE_URL}/get-balance`);
-  //   if (!connectionStatus) {
-  //     openSocket();
-  //   }
-  // }, []);
+  const canStartStrategy =
+    !isLoadingTradingStrategy &&
+    !isTradingInfoLoading &&
+    !isBalanceLoading &&
+    !!tradingInfo &&
+    !!balance &&
+    tradingInfo.estimated_investment > balance
 
-  const startHandler = async () => {
-    setIsLoading(true)
-    // try {
-    //   await axios.get(`${BASE_URL}/start-dca-grid`);
-    //   setIsLoading(false);
-    // } catch (error) {
-    //   console.log(error);
-    //   setIsLoading(false);
-    // }
+  const handleStartStrategy = async () => {
+    try {
+      await startTradingStrategy({ coin: DEFAULT_COIN_ID })
+      toast({
+        title: 'Success!',
+        description: `You have successfully started a round for ${DEFAULT_COIN}!`,
+        duration: 10000,
+      })
+    } catch (error) {
+      toast({
+        title: 'Oops... ERROR!',
+        description: (error as ErrorResponse)?.response?.data?.message,
+        variant: 'destructive',
+        duration: 60000,
+      })
+    }
   }
 
   const handleChangeQauntity = () => {
-    // Handle change quantity logic here
+    openUpdateTradingInfoDialog({
+      quantity: tradingInfo?.quantity || 0,
+      max_percent_down: tradingInfo?.max_percent_down || 0,
+    })
+  }
+
+  const handleConfirmUpdateTradingInfo = async (data: TradingInfoToUpdate) => {
+    try {
+      await updateTradingInfo({ coin: DEFAULT_COIN_ID, tradingInfo: data })
+
+      toast({
+        title: 'Success!',
+        description: `You have successfully updated trading info for ${DEFAULT_COIN}!`,
+        duration: 10000,
+      })
+    } catch (error) {
+      toast({
+        title: 'Oops... ERROR!',
+        description: (error as ErrorResponse)?.response?.data?.message,
+        variant: 'destructive',
+        duration: 60000,
+      })
+    }
   }
 
   const recalculateSellOrderHandler = async () => {
@@ -103,47 +155,67 @@ const TradingPage = () => {
             {connectionStatus ? 'Connected to server' : 'Disconnected from server'}
           </Badge>
         </div>
-        <Card className={cn('p-6 min-h-48')}>
-          <p className="mb-4 text-gray-300">Current Investment stratege</p>
-          {isTradingInfoLoading && (
+        <Card className={cn('p-6 h-[240px]')}>
+          <p className="mb-4 text-gray-300">Current investment strategy</p>
+          {(isTradingInfoLoading || isBalanceLoading) && (
             <>
               <Skeleton className="w-64 h-6 mt-1" />
+              <Skeleton className="w-64 h-6 mt-2" />
               <Skeleton className="w-64 h-6 mt-2" />
               <Skeleton className="w-40 h-9 mt-3" />
             </>
           )}
-          {!!tradingInfo && (
+          {!!tradingInfo && !!balance && (
             <>
-              <div className="flex gap-4">
+              <div className="flex gap-2">
                 <p>Quantity: {tradingInfo.quantity}</p>
-                <Button variant="link" className="h-6 p-0" onClick={() => handleChangeQauntity} disabled={isLoading}>
+                <Button
+                  variant="link"
+                  className="h-6 p-0"
+                  onClick={handleChangeQauntity}
+                  disabled={isLoadingTradingStrategy}
+                >
                   Change
                 </Button>
               </div>
-              <div className="flex gap-4">
+              <div className="flex gap-2">
+                <p>Max percent down: {tradingInfo.max_percent_down}%</p>
+                <Button
+                  variant="link"
+                  className="h-6 p-0"
+                  onClick={handleChangeQauntity}
+                  disabled={isLoadingTradingStrategy}
+                >
+                  Change
+                </Button>
+              </div>
+              <p className={cn('flex space-x-2')}>
+                <span>Estimated balance:</span>
+                <span>{USD(tradingInfo.estimated_investment)}</span>
+              </p>
+              <div className="flex gap-2">
                 <p className={cn('flex space-x-2')}>
-                  <span>Estimated balance:</span>
-                  <span>{USD(244)}</span>
+                  <span>Existing balance:</span>
+                  <span className={balance < tradingInfo.estimated_investment ? 'text-red-500' : ''}>
+                    {USD(balance)}
+                  </span>
                 </p>
                 <Button
                   variant="link"
                   className="h-6 p-0"
+                  disabled={isLoadingTradingStrategy}
                   onClick={() => window.open('https://p2p.binance.com/uk-UA', '_blank')}
                 >
                   Refill balance
                 </Button>
               </div>
-              <Button
-                onClick={startHandler}
-                disabled={isLoading || !!ordersData?.orders_are_listening?.length}
-                className="w-40 mt-4"
-              >
-                {isLoading ? 'Loading...' : 'Start DCA Grid'}
+              <Button onClick={handleStartStrategy} disabled={canStartStrategy} className="w-40 mt-4">
+                {isLoadingTradingStrategy ? 'Loading...' : 'Start Strategy'}
               </Button>
             </>
           )}
         </Card>
-
+        <TradingInfo className="my-8" />
         <div className="flex gap-10 mt-5">
           <div className="basis-1/2">
             <Card className="bg-transparent">
@@ -154,8 +226,7 @@ const TradingPage = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {!connectionStatus && <DisconnectedMessage />}
-                {connectionStatus && !ordersData && (
+                {isOrdersLoading && (
                   <div className="flex space-x-8">
                     <Skeleton className="h-[200px] flex-1 rounded-xl" />
                     <Skeleton className="h-[200px] flex-1 rounded-xl" />
@@ -163,9 +234,9 @@ const TradingPage = () => {
                     <Skeleton className="h-[200px] flex-1 rounded-xl" />
                   </div>
                 )}
-                {connectionStatus && ordersData && (
+                {!!orders?.filled?.length && (
                   <StatisticTable
-                    orders={ordersData?.completed_orders || []}
+                    orders={orders.filled || []}
                     averagePrice={ordersData?.average_price}
                     totalQuantity={ordersData?.total_quantity}
                     tpPrice={ordersData?.tp_price}
@@ -215,6 +286,15 @@ const TradingPage = () => {
           </div>
         </div>
       </div>
+      {isUpdateTradingInfoDialogOpen && (
+        <UpdateTradingInfoDialog
+          coinId={DEFAULT_COIN_ID}
+          open={isUpdateTradingInfoDialogOpen}
+          onClose={closeUpdateTradingInfoDialog}
+          onConfirm={handleConfirmUpdateTradingInfo}
+          defaultValues={tradingInfoToUpdate || undefined}
+        />
+      )}
     </Layout>
   )
 }

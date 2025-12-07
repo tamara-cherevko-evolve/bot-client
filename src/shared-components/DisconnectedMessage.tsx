@@ -1,4 +1,4 @@
-import { RocketIcon } from "lucide-react";
+import { RocketIcon } from 'lucide-react'
 
 function DisconnectedMessage() {
   return (
@@ -6,7 +6,7 @@ function DisconnectedMessage() {
       <RocketIcon className="w-12 h-12 text-gray-400" />
       <p className="text-lg font-bold text-gray-400">Disconnected</p>
     </div>
-  );
+  )
 }
 
-export default DisconnectedMessage;
+export default DisconnectedMessage

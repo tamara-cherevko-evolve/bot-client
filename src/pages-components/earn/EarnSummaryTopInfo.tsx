@@ -46,13 +46,14 @@ const EarnSummaryTopInfo = ({ earnSummary, isLoading }: EarnSummaryTopInfoProps)
   const totalBalance = Big(totalSpent).plus(earn).toNumber()
   const totalDiffInPercent = Big((earn * 100) / totalSpent).toFixed(2)
   const totalBalanceColor = totalBalance > 0 ? 'text-positive' : 'text-destructive'
+  const earnColor = earn > 0 ? 'text-positive' : 'text-destructive'
 
   const values = [
     {
       title: SECTIONS.earn,
       value: `${USD(earn)}`,
       additionalValue: `${totalDiffInPercent}%`,
-      valueColor: totalBalanceColor,
+      valueColor: earnColor,
     },
     {
       title: SECTIONS.totalBalance,
