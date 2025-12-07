@@ -15,10 +15,28 @@ export interface IEarnData {
   direction: EarnDirection
 }
 
+export interface ISuggestedSell {
+  id: number
+  name: string
+  profit_percentage: number
+  profit_dollars: number
+  current_value: number
+  amount: number
+}
+
+export interface IAllocation {
+  preferred_spent: number
+  secondary_spent: number
+  secondary_percentage: number
+  target_secondary_percentage: number
+}
+
 export interface IEarnSummary {
   balance: number
   suggested_coin_id: number
-  suggested_bid: number
+  suggested_buy: number
+  suggested_sell: ISuggestedSell[]
+  allocation: IAllocation
   summary: (IEarnCoinSummary & ICoin)[]
 }
 
@@ -31,12 +49,14 @@ export interface IEarnCoinSummary {
   diff_in_percentage: number
   current_price: number
   avg_price: number
+  holdings_percentage?: number
 }
 
 export interface IBuyCoinResponse {
   coin: string
   amount: number
   price: number
+  quantity: number
 }
 
 export interface Purchase {

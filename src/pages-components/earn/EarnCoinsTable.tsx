@@ -10,10 +10,10 @@ interface EarnCoinsTableProps {
   className?: string
   coins: (IEarnCoinSummary & ICoin)[]
   onBuyCoin: (coin: ICoin) => void
-  onRebalanceCoin: (coin: string) => void
+  onSellCoin: (coin: IEarnCoinSummary & ICoin) => void
 }
 
-const EarnCoinsTable = ({ className, coins, onBuyCoin, onRebalanceCoin }: EarnCoinsTableProps) => {
+const EarnCoinsTable = ({ className, coins, onBuyCoin, onSellCoin }: EarnCoinsTableProps) => {
   return (
     <Card className={cn('p-6', className)}>
       <p className="mb-4 text-gray-300">Summary Earning By Coins</p>
@@ -24,21 +24,17 @@ const EarnCoinsTable = ({ className, coins, onBuyCoin, onRebalanceCoin }: EarnCo
             <TableHead className="text-white">Current Prise / Earn Price</TableHead>
             <TableHead className="text-white">Earning</TableHead>
             <TableHead className="text-white">Spent</TableHead>
+            <TableHead className="text-white">Current Value</TableHead>
+            <TableHead className="text-white">Holdings %</TableHead>
             <TableHead className="text-white">Amount</TableHead>
-            <TableHead className="text-white"></TableHead>
             <TableHead className="text-white"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {coins
+          {[...coins]
             .sort((a, b) => Number(a.priority) - Number(b.priority))
             .map((item) => (
-              <EarnSummaryTableRow
-                summaryItem={item}
-                onBuyCoin={onBuyCoin}
-                onRebalanceCoin={onRebalanceCoin}
-                key={item.name}
-              />
+              <EarnSummaryTableRow summaryItem={item} onBuyCoin={onBuyCoin} onSellCoin={onSellCoin} key={item.name} />
             ))}
         </TableBody>
       </Table>

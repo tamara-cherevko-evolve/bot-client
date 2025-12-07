@@ -2,5 +2,6 @@ export const ROUTES = {
   HOME: '/',
   EARN: '/earn',
   EARN_HISTORY: '/earn/history',
-  TRADING: '/trading',
+  BLAGO_INVEST: '/blago-invest',
+  OVERVIEW: '/overview',
 }

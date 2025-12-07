@@ -5,7 +5,7 @@ import { axiosGet } from 'helpers/axiosInstance'
 import { ICoin } from 'interfaces/coins/interface'
 
 const useGetCoins = () => {
-  const quary = useQuery({
+  const { data, isPending, isLoading, isError, error, refetch } = useQuery({
     queryKey: [QUERIES_KEYS.GET_COINS],
     queryFn: () => axiosGet<ICoin[]>(`/coins`),
     throwOnError: true,
@@ -13,12 +13,10 @@ const useGetCoins = () => {
   })
 
   const getCoinById = (coinId: number) => {
-    console.log('coinId', coinId)
-    console.log('quary?.data', quary?.data)
-    return quary?.data?.find((coin) => coin.id === coinId)
+    return data?.find((coin) => coin.id === coinId)
   }
 
-  return { ...quary, getCoinById }
+  return { data, isPending, isLoading, isError, error, refetch, getCoinById }
 }
 
 export default useGetCoins

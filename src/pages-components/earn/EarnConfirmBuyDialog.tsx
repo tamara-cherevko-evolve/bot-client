@@ -60,8 +60,13 @@ const EarnConfirmBuyDialog = ({ coin, open, onConfirm, onClose, initialValue }: 
             <span className="ml-2">$</span>
           </div>
 
-          <div className="flex gap-2">
-            <AlertDialogAction onClick={handleSubmit(handleSave)}>Buy</AlertDialogAction>
+          <div className="flex gap-4">
+            <AlertDialogAction
+              onClick={handleSubmit(handleSave)}
+              className="bg-green-600 hover:bg-green-700 w-16 text-white"
+            >
+              Buy
+            </AlertDialogAction>
             <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
           </div>
         </AlertDialogContent>

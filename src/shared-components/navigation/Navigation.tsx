@@ -2,17 +2,11 @@ import { NavLink } from 'react-router-dom'
 
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from '@/components/ui/navigation-menu'
 import { ROUTES } from 'constants/routes'
-import { Logo } from 'shared-components'
 
 const navigationMenu = [
-  {
-    name: 'Earn',
-    href: ROUTES.EARN,
-  },
-  {
-    name: 'Trading',
-    href: ROUTES.TRADING,
-  },
+  { name: 'Overview', href: ROUTES.OVERVIEW },
+  { name: 'Крипта', href: ROUTES.EARN },
+  { name: 'Blago Invest', href: ROUTES.BLAGO_INVEST },
 ]
 const Navigation = () => {
   const activeClassName = 'text-primary'
@@ -21,11 +15,6 @@ const Navigation = () => {
   return (
     <NavigationMenu>
       <NavigationMenuList className="flex px-8 py-4 space-x-6">
-        <NavigationMenuItem>
-          <NavLink to={ROUTES.HOME}>
-            <Logo />
-          </NavLink>
-        </NavigationMenuItem>
         {navigationMenu.map((item) => (
           <NavigationMenuItem key={item.name}>
             <NavLink to={item.href} className={({ isActive }) => (isActive ? activeClassName : inactiveClassName)}>
