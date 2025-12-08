@@ -42,7 +42,13 @@ const EarnSummary = ({ earnSummary, isLoading, purchaseAmount, onBuyCoin, onSell
           </Button>
         </div>
       )}
-      {isBalanceEnough && suggestedCoin && (
+      {isBalanceEnough && purchaseAmount < 5 && (
+        <div className="mb-1 space-y-1">
+          <p className="text-muted-foreground">No suggestion for today left</p>
+          <p className="mb-2 text-gray-300">Binance Balance: {USD(earnSummary?.balance ?? 0, 2)}</p>
+        </div>
+      )}
+      {isBalanceEnough && purchaseAmount >= 5 && suggestedCoin && (
         <div className="mb-1 space-y-1">
           <div className="flex space-x-2">
             <p className="text-gray-300 ">Suggested to buy:</p>
