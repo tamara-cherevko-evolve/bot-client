@@ -6,6 +6,7 @@ const QUERIES_KEYS = {
   GET_EARN_SUMMARY: 'get-earn-summary',
   GET_TRADING_INFO: 'get-trading-info',
   GET_TRADING_ORDERS: 'get-trading-orders',
+  GET_ACCOUNT_TRANSACTIONS: 'get-account-transactions',
 }
 
 export default QUERIES_KEYS
